@@ -1,0 +1,122 @@
+.justForTodayForm {
+  text-align: center;
+  font-family: 'FrankRe DL v2 AAA';
+  direction: rtl;
+  max-width: 500px;
+  width: calc(100vw - 2rem);
+  margin: 1rem auto;
+
+  .header {
+    position: relative;
+    font-size: 2.125rem;
+
+    .content {
+      padding: 0 0.5rem;
+      background-color: #fff;
+      position: relative;
+      display: inline-block;
+      z-index: 1;
+      color: #aaa;
+    }
+
+    .line1 {
+      position: absolute;
+      width: 100%;
+      border-top: 1px solid #ccc;
+      bottom: 15px;
+    }
+
+    .line2 {
+      position: absolute;
+      width: 100%;
+      border-top: 1px solid #ccc;
+      bottom: 28px;
+    }
+  }
+
+  .daysClean {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .counter {
+      font-size: 2.5rem;
+      text-align: center;
+      font-family: inherit;
+      font-weight: inherit;
+      border: none;
+      width: 100px;
+    }
+
+    .label {
+      margin-top: -0.5rem;
+      color: #888;
+    }
+  }
+
+  .formControl {
+    font-size: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    text-align: right;
+
+    .questionLabel {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .textarea {
+      padding: 0.5rem 0.75rem;
+      font-family: inherit;
+      font-size: 1.25rem;
+      background-color: #ededed;
+      resize: none;
+      border: none;
+      border-radius: 4px;
+      box-shadow: 0px 4px 0px 0px #ddd;
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+
+    .options {
+      display: flex;
+      justify-content: stretch;
+      gap: 0.75rem;
+      margin: 0 1rem 1rem;
+
+      .option {
+        opacity: 0;
+        appearance: none;
+        position: absolute;
+      }
+
+      .option:checked + .optionLabel {
+        background-color: #000;
+        color: #ededed;
+      }
+
+      .optionLabel {
+        text-align: center;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #ededed;
+        border: none;
+        aspect-ratio: 1 / 1;
+        border-radius: 100%;
+        font-family: inherit;
+        font-size: 1.5rem;
+        font-weight: inherit;
+        padding: 0;
+        cursor: pointer;
+        box-shadow: 0px 2px 0px 0px #ddd;
+      }
+    }
+  }
+}
