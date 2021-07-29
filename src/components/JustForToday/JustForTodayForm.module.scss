@@ -5,6 +5,7 @@
   max-width: 500px;
   width: calc(100vw - 2rem);
   margin: 1rem auto;
+  position: relative;
 
   .header {
     position: relative;
@@ -23,25 +24,28 @@
       position: absolute;
       width: 100%;
       border-top: 1px solid #ccc;
-      bottom: 15px;
+      bottom: 17px;
     }
 
     .line2 {
       position: absolute;
       width: 100%;
       border-top: 1px solid #ccc;
-      bottom: 28px;
+      top: 17px;
     }
   }
 
   .daysClean {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
     margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
 
     .counter {
-      font-size: 2.5rem;
+      font-size: 3.5rem;
       text-align: center;
       font-family: inherit;
       font-weight: inherit;
@@ -51,7 +55,44 @@
 
     .label {
       margin-top: -0.5rem;
+      font-size: 1.5rem;
       color: #888;
+    }
+  }
+
+  .nav {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: -1.2rem;
+    position: absolute;
+    margin-top: 37px;
+    width: 100%;
+
+    .spacer {
+      flex: 1;
+    }
+
+    .link {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: baseline;
+      color: inherit;
+      text-decoration: none;
+
+      .backward {
+        align-items: flex-start;
+      }
+
+      &.forward {
+        align-items: flex-end;
+      }
+
+      svg {
+        width: 25px;
+        height: 40px;
+      }
     }
   }
 
@@ -77,6 +118,7 @@
       border: none;
       border-radius: 4px;
       box-shadow: 0px 4px 0px 0px #ddd;
+      font-family: 'Varela Round', sans-serif;
 
       &:focus {
         box-shadow: none;
@@ -84,7 +126,8 @@
     }
 
     .options {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
       justify-content: stretch;
       gap: 0.75rem;
       margin: 0 1rem 1rem;
