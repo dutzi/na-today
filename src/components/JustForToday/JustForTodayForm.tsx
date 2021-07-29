@@ -265,7 +265,7 @@ export default function JustForTodayForm() {
       </div>
       <div className={styles.formControl}>
         <label className={styles.questionLabel} htmlFor="q2">
-          דבר טוב שעבר עלי?
+          דבר טוב שעבר עלי:
         </label>
         <TextareaAutosize
           className={styles.textarea}
@@ -277,7 +277,7 @@ export default function JustForTodayForm() {
       </div>
       <div className={styles.formControl}>
         <label className={styles.questionLabel} htmlFor="q3">
-          דבר לא טוב שעבר עלי?
+          דבר לא טוב שעבר עלי:
         </label>
         <TextareaAutosize
           className={styles.textarea}
@@ -301,7 +301,7 @@ export default function JustForTodayForm() {
       </div>
       <div className={styles.formControl}>
         <label className={styles.questionLabel} htmlFor="q5">
-          מטרה חדשה שהצבתי לעצמי למחר:
+          מטרה חדשה שהצבתי לעצמי:
         </label>
         <TextareaAutosize
           className={styles.textarea}
