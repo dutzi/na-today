@@ -7,6 +7,10 @@ import styles from './JustForTodayForm.module.scss';
 import { Link, useRouteMatch } from 'react-router-dom';
 import React, { useEffect, useMemo, useState } from 'react';
 import throttle from 'lodash/fp/throttle';
+import StringCrypto from 'string-crypto';
+import { v4 as uuidv4 } from 'uuid';
+
+const { encryptString, decryptString } = new StringCrypto();
 
 interface RouteParams {
   date?: string;
@@ -50,6 +54,10 @@ interface UserData {
   firstDayDate: Date;
 }
 
+const password = localStorage.getItem('password') ?? uuidv4();
+
+localStorage.setItem('password', password);
+
 export default function JustForTodayForm() {
   const routeParams = useRouteMatch<RouteParams>();
   const [uid, setUid] = useState<string>();
@@ -66,6 +74,14 @@ export default function JustForTodayForm() {
   const nextDate = new Date(date.getTime() + dayInMs);
   const showNextButton = nextDate.getTime() <= new Date().getTime() + dayInMs;
   const formsCollectionPath = `/just-for-today/${uid}/forms`;
+
+  function encryptAnswers(answers: Answers) {
+    return encryptString(JSON.stringify(answers), password);
+  }
+
+  function decryptAnswers(answers: string) {
+    return JSON.parse(decryptString(answers, password));
+  }
 
   useEffect(() => {
     if (!userData) {
@@ -106,7 +122,7 @@ export default function JustForTodayForm() {
       .then((doc) => {
         if (doc.docs.length !== 0) {
           setDocId(doc.docs[0].id);
-          setAnswers(doc.docs[0].data() as Answers);
+          setAnswers(decryptAnswers(doc.docs[0].data().answers) as Answers);
           return;
         }
 
@@ -115,7 +131,7 @@ export default function JustForTodayForm() {
           .collection(formsCollectionPath)
           .add({
             date: getDate(date),
-            ...createEmptyAnswers(),
+            answers: encryptAnswers(createEmptyAnswers()),
           })
           .then((res) => {
             setDocId(res.id);
@@ -164,7 +180,10 @@ export default function JustForTodayForm() {
       .collection(formsCollectionPath)
       .doc(docId)
       .update({
-        [`q${index}`]: value,
+        answers: encryptAnswers({
+          ...answers,
+          [`q${index}`]: value,
+        } as Answers),
       });
   });
 

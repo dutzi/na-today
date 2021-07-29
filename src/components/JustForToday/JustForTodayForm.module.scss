@@ -1,6 +1,6 @@
 .justForTodayForm {
   text-align: center;
-  font-family: 'FrankRe DL v2 AAA';
+  font-family: 'FrankRe';
   direction: rtl;
   max-width: 500px;
   width: calc(100vw - 2rem);
@@ -152,6 +152,7 @@
         background: #ededed;
         border: none;
         aspect-ratio: 1 / 1;
+        height: 84px;
         border-radius: 100%;
         font-family: inherit;
         font-size: 1.5rem;
