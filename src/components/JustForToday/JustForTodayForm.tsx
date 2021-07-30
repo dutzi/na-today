@@ -9,11 +9,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import throttle from 'lodash/fp/throttle';
 import StringCrypto from 'string-crypto';
 import { v4 as uuidv4 } from 'uuid';
+import Header from '../Header/Header';
+import ShareForm from '../ShareForm/ShareForm';
 
 const { encryptString, decryptString } = new StringCrypto();
 
 interface RouteParams {
   date?: string;
+  shareId?: string;
 }
 
 const dayInMs = 24 * 60 * 60 * 1000;
@@ -58,15 +61,20 @@ const password = localStorage.getItem('password') ?? uuidv4();
 
 localStorage.setItem('password', password);
 
-export default function JustForTodayForm() {
+export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
   const routeParams = useRouteMatch<RouteParams>();
   const [uid, setUid] = useState<string>();
   const [docId, setDocId] = useState<string>();
+  const [readOnlyFormDate, setReadOnlyFormDate] = useState<Date>();
   const date = useMemo(
-    () => new Date(routeParams.params.date ?? new Date()),
-    [routeParams]
+    () => readOnlyFormDate ?? new Date(routeParams.params.date ?? new Date()),
+    [routeParams, readOnlyFormDate]
   );
   const [answers, setAnswers] = useState<Answers>();
+  const [isShared, setIsShared] = useState<boolean>();
+  const [shareId, setShareId] = useState<string | null>(
+    routeParams.params.shareId ?? null
+  );
   const [userData, setUserData] = useState<UserData>();
   const [daysClean, setDaysClean] = useState(0);
 
@@ -84,7 +92,7 @@ export default function JustForTodayForm() {
   }
 
   useEffect(() => {
-    if (!userData) {
+    if (!userData || readOnly) {
       return;
     }
 
@@ -94,23 +102,48 @@ export default function JustForTodayForm() {
           (24 * 60 * 60 * 1000)
       )
     );
-  }, [date, userData]);
+  }, [date, userData, readOnly]);
+
+  useEffect(() => {
+    if (!readOnly || !shareId) {
+      return;
+    }
+
+    firebase
+      .firestore()
+      .doc(`/shared-forms/${shareId}`)
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+        if (!data) {
+          return;
+        }
+
+        setAnswers(data.answers as Answers);
+        setReadOnlyFormDate(new Date(data.date));
+        setDaysClean(data.daysClean);
+      });
+  }, [shareId, readOnly]);
 
   // Logs in
   //
   useEffect(() => {
+    if (readOnly) {
+      return;
+    }
+
     firebase
       .auth()
       .signInAnonymously()
       .then((res) => {
         setUid(res.user?.uid);
       });
-  }, []);
+  }, [readOnly]);
 
   // Loads the doc, or creates an empty one
   //
   useEffect(() => {
-    if (!uid) {
+    if (!uid || readOnly) {
       return;
     }
 
@@ -123,6 +156,8 @@ export default function JustForTodayForm() {
         if (doc.docs.length !== 0) {
           setDocId(doc.docs[0].id);
           setAnswers(decryptAnswers(doc.docs[0].data().answers) as Answers);
+          setIsShared(doc.docs[0].data().isShared);
+          setShareId(doc.docs[0].data().shareId);
           return;
         }
 
@@ -132,25 +167,20 @@ export default function JustForTodayForm() {
           .add({
             date: getDate(date),
             answers: encryptAnswers(createEmptyAnswers()),
+            isShared: false,
           })
           .then((res) => {
             setDocId(res.id);
+            setIsShared(false);
             setAnswers(createEmptyAnswers());
           });
       });
-  }, [uid, date, formsCollectionPath]);
-
-  // Update q6 answer (score, radio buttons)
-  useEffect(() => {
-    if (!answers?.q6) {
-      return;
-    }
-  }, [answers]);
+  }, [uid, date, formsCollectionPath, readOnly]);
 
   // Loads user data
   //
   useEffect(() => {
-    if (!uid) {
+    if (!uid || readOnly) {
       return;
     }
 
@@ -172,7 +202,7 @@ export default function JustForTodayForm() {
 
         setUserData(userData);
       });
-  }, [uid]);
+  }, [uid, readOnly]);
 
   const updateAnswer = throttle(500, (index: number, value: string) => {
     firebase
@@ -185,6 +215,10 @@ export default function JustForTodayForm() {
           [`q${index}`]: value,
         } as Answers),
       });
+
+    if (isShared) {
+      firebase.firestore().doc(`/shared-forms/${shareId}`).update({ answers });
+    }
   });
 
   function handleAnswerChange(
@@ -210,8 +244,32 @@ export default function JustForTodayForm() {
   }
 
   function handleScoreChange(e: React.ChangeEvent<HTMLDivElement>) {
+    if (readOnly) {
+      return;
+    }
+
     updateAnswer(6, e.target.id);
     setAnswers({ ...answers, q6: e.target.id } as Answers);
+  }
+
+  async function handleShare() {
+    const shareId = uuidv4().split('-').pop()!;
+    await firebase
+      .firestore()
+      .collection(formsCollectionPath)
+      .doc(docId)
+      .update({
+        isShared: true,
+        shareId: shareId,
+      });
+
+    await firebase
+      .firestore()
+      .doc(`/shared-forms/${shareId}`)
+      .set({ answers, date: date.toISOString(), daysClean });
+
+    setIsShared(true);
+    setShareId(shareId);
   }
 
   if (!answers) {
@@ -219,29 +277,27 @@ export default function JustForTodayForm() {
   }
 
   return (
-    <div className={styles.justForTodayForm}>
-      <h1 className={styles.header}>
-        <div className={styles.content}>רק להיום</div>
-        <div className={styles.line1} />
-        <div className={styles.line2} />
-      </h1>
-      <nav className={styles.nav}>
-        <Link
-          className={cx(styles.link, styles.backward)}
-          to={`/${getDate(prevDate)}`}
-        >
-          <ChevronRight />
-        </Link>
-        <div className={styles.spacer} />
-        {showNextButton && (
+    <div className={cx(styles.justForTodayForm, readOnly && styles.readOnly)}>
+      <Header />
+      {!readOnly && (
+        <nav className={styles.nav}>
           <Link
-            className={cx(styles.link, styles.forward)}
-            to={`/${getDate(nextDate)}`}
+            className={cx(styles.link, styles.backward)}
+            to={`/${getDate(prevDate)}`}
           >
-            <ChevronLeft />
+            <ChevronRight />
           </Link>
-        )}
-      </nav>
+          <div className={styles.spacer} />
+          {showNextButton && (
+            <Link
+              className={cx(styles.link, styles.forward)}
+              to={`/${getDate(nextDate)}`}
+            >
+              <ChevronLeft />
+            </Link>
+          )}
+        </nav>
+      )}
       <div className={styles.daysClean}>
         <div className={styles.date}>{prettyPrintDate(date)}</div>
         <input
@@ -261,6 +317,7 @@ export default function JustForTodayForm() {
           minRows={5}
           value={answers.q1}
           onChange={handleAnswerChange.bind(null, 1)}
+          readOnly={readOnly}
         />
       </div>
       <div className={styles.formControl}>
@@ -273,6 +330,7 @@ export default function JustForTodayForm() {
           minRows={5}
           value={answers.q2}
           onChange={handleAnswerChange.bind(null, 2)}
+          readOnly={readOnly}
         />
       </div>
       <div className={styles.formControl}>
@@ -285,6 +343,7 @@ export default function JustForTodayForm() {
           minRows={5}
           value={answers.q3}
           onChange={handleAnswerChange.bind(null, 3)}
+          readOnly={readOnly}
         />
       </div>
       <div className={styles.formControl}>
@@ -297,6 +356,7 @@ export default function JustForTodayForm() {
           minRows={5}
           value={answers.q4}
           onChange={handleAnswerChange.bind(null, 4)}
+          readOnly={readOnly}
         />
       </div>
       <div className={styles.formControl}>
@@ -309,6 +369,7 @@ export default function JustForTodayForm() {
           minRows={5}
           value={answers.q5}
           onChange={handleAnswerChange.bind(null, 5)}
+          readOnly={readOnly}
         />
       </div>
       <div className={styles.formControl} onChange={handleScoreChange}>
@@ -345,6 +406,7 @@ export default function JustForTodayForm() {
           minRows={5}
           value={answers.q7}
           onChange={handleAnswerChange.bind(null, 7)}
+          readOnly={readOnly}
         />
       </div>
       <div className={styles.formControl}>
@@ -357,14 +419,26 @@ export default function JustForTodayForm() {
           minRows={5}
           value={answers.q8}
           onChange={handleAnswerChange.bind(null, 8)}
+          readOnly={readOnly}
         />
       </div>
-      <div className={styles.disclaimer}>
-        השאלון נשמר אוטומטית, בצורה מוצפנת.
-        <br />
-        לאף אחד, כולל מנהלי האתר אין אפשרות לקרוא את תוכנו, למעט שאלונים אותם
-        בחרתם לשתף.
-      </div>
+      {!readOnly && (
+        <>
+          {isShared ? (
+            <ShareForm shareId={shareId!} />
+          ) : (
+            <button className={styles.shareButton} onClick={handleShare}>
+              שיתוף
+            </button>
+          )}
+          <div className={styles.disclaimer}>
+            השאלון נשמר אוטומטית, בצורה מוצפנת.
+            <br />
+            לאף אחד, כולל מנהלי האתר אין אפשרות לקרוא את תוכנו, למעט שאלונים
+            אותם בחרתם לשתף.
+          </div>
+        </>
+      )}
     </div>
   );
 }

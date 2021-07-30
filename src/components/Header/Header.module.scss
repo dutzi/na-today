@@ -1,0 +1,29 @@
+.header {
+  position: relative;
+  font-size: 2.125rem;
+
+  .content {
+    padding: 0 0.5rem;
+    background-color: #fff;
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+    color: #aaa;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+
+  .line1 {
+    position: absolute;
+    width: 100%;
+    border-top: 1px solid #ccc;
+    bottom: 17px;
+  }
+
+  .line2 {
+    position: absolute;
+    width: 100%;
+    border-top: 1px solid #ccc;
+    top: 17px;
+  }
+}

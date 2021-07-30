@@ -7,8 +7,11 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/:date?">
+        <Route path="/:date?" exact>
           <JustForTodayForm />
+        </Route>
+        <Route path="/r/:shareId" exact>
+          <JustForTodayForm readOnly />
         </Route>
       </Switch>
     </Router>
