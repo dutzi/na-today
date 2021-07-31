@@ -11,6 +11,7 @@ import StringCrypto from 'string-crypto';
 import { v4 as uuidv4 } from 'uuid';
 import Header from '../Header/Header';
 import ShareForm from '../ShareForm/ShareForm';
+import SecondDeviceLoginForm from '../SecondDeviceLoginForm/SecondDeviceLoginForm';
 
 const { encryptString, decryptString } = new StringCrypto();
 
@@ -57,8 +58,10 @@ interface UserData {
   firstDayDate: Date;
 }
 
+const uuid = localStorage.getItem('uuid') ?? uuidv4();
 const password = localStorage.getItem('password') ?? uuidv4();
 
+localStorage.setItem('uuid', uuid);
 localStorage.setItem('password', password);
 
 export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
@@ -77,11 +80,13 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
   );
   const [userData, setUserData] = useState<UserData>();
   const [daysClean, setDaysClean] = useState(0);
+  const [showSecondDeviceLoginForm, setShowSecondDeviceLoginForm] =
+    useState(false);
 
   const prevDate = new Date(date.getTime() - dayInMs);
   const nextDate = new Date(date.getTime() + dayInMs);
   const showNextButton = nextDate.getTime() <= new Date().getTime() + dayInMs;
-  const formsCollectionPath = `/just-for-today/${uid}/forms`;
+  const formsCollectionPath = `/just-for-today/${uuid}/forms`;
 
   function encryptAnswers(answers: Answers) {
     return encryptString(JSON.stringify(answers), password);
@@ -186,7 +191,7 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
 
     firebase
       .firestore()
-      .doc(`/just-for-today/${uid}`)
+      .doc(`/just-for-today/${uuid}`)
       .get()
       .then((res) => {
         const data = res.data();
@@ -236,7 +241,7 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
 
     const firstDayDate = new Date(date.getTime() - value * 24 * 60 * 60 * 1000);
 
-    firebase.firestore().doc(`/just-for-today/${uid}`).set({
+    firebase.firestore().doc(`/just-for-today/${uuid}`).set({
       firstDayDate: firstDayDate.toISOString(),
     });
 
@@ -270,6 +275,10 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
 
     setIsShared(true);
     setShareId(shareId);
+  }
+
+  function handleSecondDeviceLogin() {
+    setShowSecondDeviceLoginForm(true);
   }
 
   if (!answers) {
@@ -425,10 +434,10 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
       {!readOnly && (
         <>
           {isShared && <ShareForm shareId={shareId!} />}
-          <div className={styles.shareButtons}>
+          <div className={styles.actions}>
             {!isShared && (
               <>
-                <button className={styles.shareButton} onClick={handleShare}>
+                <button className={styles.linkButton} onClick={handleShare}>
                   יצירת לינק לשיתוף
                 </button>
                 <div className={styles.dot}>·</div>
@@ -459,6 +468,17 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
               שיתוף בוואטסאפ
             </a>
           </div>
+          <div className={styles.actions}>
+            {!showSecondDeviceLoginForm && (
+              <button
+                className={styles.linkButton}
+                onClick={handleSecondDeviceLogin}
+              >
+                כניסה ממכשיר נוסף
+              </button>
+            )}
+          </div>
+          {showSecondDeviceLoginForm && <SecondDeviceLoginForm />}
           <div className={styles.disclaimer}>
             השאלון נשמר אוטומטית, בצורה מוצפנת.
             <br />
