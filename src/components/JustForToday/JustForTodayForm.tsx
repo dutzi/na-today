@@ -452,7 +452,7 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
                       `*אסירות תודה:*\n${answers.q8}`,
                     ].join('\n\n') +
                     `\n\n` +
-                    `(נוצר באמצעות https://na.today)`
+                    `(נוצר בעזרת https://na.today)`
                 )
               }
             >
