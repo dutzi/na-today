@@ -439,7 +439,8 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
               href={
                 `whatsapp://send?text=` +
                 encodeURIComponent(
-                  `*רק להיום*\n\n` +
+                  `*רק להיום* — ${prettyPrintDate(date)}\n\n` +
+                    `*ימי נקיון:* ${daysClean}\n\n` +
                     [
                       `*איך עבר עלי היום?*\n${answers.q1}`,
                       `*דבר טוב שעבר עלי:*\n${answers.q2}`,
