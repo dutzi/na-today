@@ -424,13 +424,40 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
       </div>
       {!readOnly && (
         <>
-          {isShared ? (
-            <ShareForm shareId={shareId!} />
-          ) : (
-            <button className={styles.shareButton} onClick={handleShare}>
-              שיתוף
-            </button>
-          )}
+          {isShared && <ShareForm shareId={shareId!} />}
+          <div className={styles.shareButtons}>
+            {!isShared && (
+              <>
+                <button className={styles.shareButton} onClick={handleShare}>
+                  יצירת לינק לשיתוף
+                </button>
+                <div className={styles.dot}>·</div>
+              </>
+            )}
+            <a
+              className={styles.shareWhatsapp}
+              href={
+                `whatsapp://send?text=` +
+                encodeURIComponent(
+                  `*רק להיום*\n\n` +
+                    [
+                      `*איך עבר עלי היום?*\n${answers.q1}`,
+                      `*דבר טוב שעבר עלי:*\n${answers.q2}`,
+                      `*דבר לא טוב שעבר עלי:*\n${answers.q3}`,
+                      `*דבר חדש שלמדתי על עצמי:*\n${answers.q4}`,
+                      `*מטרה חדשה שהצבתי לעצמי:*\n${answers.q5}`,
+                      `*ציון לעצמי:* ${answers.q6.slice(5)}`,
+                      `*הסבר לציון:*\n${answers.q7}`,
+                      `*אסירות תודה:*\n${answers.q8}`,
+                    ].join('\n\n') +
+                    `\n\n` +
+                    `(נוצר באמצעות https://na.today)`
+                )
+              }
+            >
+              שיתוף בוואטסאפ
+            </a>
+          </div>
           <div className={styles.disclaimer}>
             השאלון נשמר אוטומטית, בצורה מוצפנת.
             <br />
