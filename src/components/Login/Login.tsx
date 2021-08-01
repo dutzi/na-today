@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import styles from './Login.module.scss';
 import StringCrypto from 'string-crypto';
 import Header from '../Header/Header';

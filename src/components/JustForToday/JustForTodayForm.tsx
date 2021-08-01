@@ -1,6 +1,6 @@
 import TextareaAutosize from 'react-textarea-autosize';
 import cx from 'classnames';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { ReactComponent as ChevronRight } from '../../svgs/chevron-right.svg';
 import { ReactComponent as ChevronLeft } from '../../svgs/chevron-left.svg';
 import styles from './JustForTodayForm.module.scss';
@@ -79,7 +79,7 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
     routeParams.params.shareId ?? null
   );
   const [userData, setUserData] = useState<UserData>();
-  const [daysClean, setDaysClean] = useState(0);
+  const [daysClean, setDaysClean] = useState('');
   const [showSecondDeviceLoginForm, setShowSecondDeviceLoginForm] =
     useState(false);
 
@@ -101,13 +101,16 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
       return;
     }
 
-    setDaysClean(
-      Math.round(
-        (date.getTime() - userData.firstDayDate.getTime()) /
-          (24 * 60 * 60 * 1000)
-      )
+    const nextDaysClean = Math.round(
+      (date.getTime() - userData.firstDayDate.getTime()) / (24 * 60 * 60 * 1000)
     );
-  }, [date, userData, readOnly]);
+
+    if (daysClean === '' && nextDaysClean === 0) {
+      return;
+    }
+
+    setDaysClean(nextDaysClean.toString());
+  }, [date, userData, readOnly, daysClean]);
 
   useEffect(() => {
     if (!readOnly || !shareId) {
@@ -235,11 +238,17 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
   }
 
   function handleDaysCleanChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = Number(e.target.value);
+    const value = e.target.value;
 
     setDaysClean(value);
 
-    const firstDayDate = new Date(date.getTime() - value * 24 * 60 * 60 * 1000);
+    if (isNaN(Number(value))) {
+      return;
+    }
+
+    const firstDayDate = new Date(
+      date.getTime() - Number(value) * 24 * 60 * 60 * 1000
+    );
 
     firebase.firestore().doc(`/just-for-today/${uuid}`).set({
       firstDayDate: firstDayDate.toISOString(),
@@ -387,21 +396,22 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
         </label>
         <div className={styles.options}>
           {[...new Array(10)].map((_, index) => (
-            <>
+            <div key={index}>
               <input
                 id={`score${index + 1}`}
                 className={styles.option}
                 type="radio"
                 name="score"
+                onChange={() => {}}
                 checked={answers.q6 === `score${index + 1}`}
               />
               <label
                 className={styles.optionLabel}
                 htmlFor={`score${index + 1}`}
               >
-                {index + 1}
+                <div className={styles.content}>{index + 1}</div>
               </label>
-            </>
+            </div>
           ))}
         </div>
       </div>

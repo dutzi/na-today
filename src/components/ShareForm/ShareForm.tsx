@@ -17,6 +17,7 @@ export default function ShareForm({ shareId }: { shareId: string }) {
         className={styles.url}
         type="text"
         value={`${basepath}/r/${shareId}`}
+        onChange={() => {}}
         onFocus={handleFocus}
       />
       <div>

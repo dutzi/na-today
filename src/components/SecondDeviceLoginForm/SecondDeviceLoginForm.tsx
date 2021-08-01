@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import styles from './SecondDeviceLoginForm.module.scss';
 import StringCrypto from 'string-crypto';
 import generator from 'generate-password';
 
 const { encryptString } = new StringCrypto();
 
-var password = generator.generate({
-  length: 10,
+let password = generator.generate({
+  length: 12,
   numbers: true,
-  symbols: true,
   excludeSimilarCharacters: true,
 });
+
+password = `${password.slice(0, 4)}-${password.slice(4, 8)}-${password.slice(
+  8,
+  12
+)}`;
 
 async function generateLoginId() {
   let loginId: number;
@@ -25,7 +29,7 @@ async function generateLoginId() {
         .firestore()
         .doc(docPath)
         .set({
-          createdAt: new Date().toISOString(),
+          createdAt: new Date().getTime(),
           password: encryptString(localStorage.getItem('password'), password),
           uuid: encryptString(localStorage.getItem('uuid'), password),
         });
@@ -66,7 +70,7 @@ export default function SecondDeviceLoginForm() {
         value={`${basepath}/login/${loginId}`}
         onFocus={handleFocus}
       />
-      <div>אחרי שנכנסתם ללינק, הזינו את הקוד הבא לכשתתבקשו:</div>
+      <div>לאחר שנכנסתם ללינק, הזינו את הקוד הבא לכשתתבקשו:</div>
       <div className={styles.code}>{password}</div>
     </div>
   );

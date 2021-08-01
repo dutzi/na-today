@@ -126,6 +126,7 @@
       }
 
       .optionLabel {
+        position: relative;
         text-align: center;
         flex: 1;
         display: flex;
@@ -133,8 +134,6 @@
         justify-content: center;
         background: #ededed;
         border: none;
-        aspect-ratio: 1 / 1;
-        // height: 84px;
         border-radius: 100%;
         font-family: inherit;
         font-size: 1.5rem;
@@ -142,6 +141,16 @@
         padding: 0;
         cursor: pointer;
         box-shadow: 0px 2px 0px 0px #ddd;
+        padding-bottom: 100%;
+        height: 0;
+
+        .content {
+          position: absolute;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          top: 0;
+        }
       }
     }
   }
@@ -173,6 +182,8 @@
       background: none;
       border: none;
       white-space: nowrap;
+      margin: 0;
+      cursor: pointer;
     }
   }
 }
