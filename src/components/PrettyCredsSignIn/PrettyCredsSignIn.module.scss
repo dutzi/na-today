@@ -1,0 +1,54 @@
+.prettyCredsSignIn {
+  text-align: center;
+  font-family: 'Frank Ruhl Libre';
+  direction: rtl;
+  max-width: 500px;
+  width: calc(100vw - 2rem);
+  margin: 1rem auto;
+  position: relative;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .linkButton {
+    display: block;
+    align-self: flex-end;
+    padding: 0;
+    font-family: inherit;
+    font-style: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    background: none;
+    border-radius: 4px;
+    background-color: #e7e7e7;
+    border: none;
+    padding: 0.25rem 1.5rem;
+    white-space: nowrap;
+    font-size: 1.25rem;
+    margin: auto;
+  }
+
+  .textarea {
+    width: 100%;
+    margin: 1rem 0;
+    text-align: center;
+    appearance: none;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    box-sizing: border-box;
+    direction: ltr;
+    font-family: monospace;
+    font-weight: bold;
+    padding: 1rem;
+    background: #ededed;
+    font-size: 1rem;
+    direction: ltr;
+  }
+
+  .error {
+    margin-bottom: 1rem;
+  }
+}

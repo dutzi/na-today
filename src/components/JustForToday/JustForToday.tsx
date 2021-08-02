@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Header from '../Header/Header';
 import ShareForm from '../ShareForm/ShareForm';
 import SecondDeviceLoginForm from '../PairLink/PairLink';
+import PrettyCreds from '../PrettyCreds/PrettyCreds';
 
 const { encryptString, decryptString } = new StringCrypto();
 
@@ -58,8 +59,8 @@ interface UserData {
   firstDayDate: Date;
 }
 
-const uuid = localStorage.getItem('uuid') ?? uuidv4();
-const password = localStorage.getItem('password') ?? uuidv4();
+const uuid = localStorage.getItem('uuid') ?? uuidv4().split('-').pop()!;
+const password = localStorage.getItem('password') ?? uuidv4().split('-').pop()!;
 
 localStorage.setItem('uuid', uuid);
 localStorage.setItem('password', password);
@@ -79,9 +80,10 @@ export default function JustForToday({ readOnly }: { readOnly?: boolean }) {
     routeParams.params.shareId ?? null
   );
   const [userData, setUserData] = useState<UserData>();
-  const [daysClean, setDaysClean] = useState('');
+  const [daysClean, setDaysClean] = useState('0');
   const [showSecondDeviceLoginForm, setShowSecondDeviceLoginForm] =
     useState(false);
+  const [showPrettyCreds, setShowPrettyCreds] = useState(false);
 
   const prevDate = new Date(date.getTime() - dayInMs);
   const nextDate = new Date(date.getTime() + dayInMs);
@@ -290,6 +292,10 @@ export default function JustForToday({ readOnly }: { readOnly?: boolean }) {
     setShowSecondDeviceLoginForm(true);
   }
 
+  function handleShowPrettyPassword() {
+    setShowPrettyCreds(true);
+  }
+
   if (!answers) {
     return null;
   }
@@ -480,15 +486,29 @@ export default function JustForToday({ readOnly }: { readOnly?: boolean }) {
           </div>
           <div className={styles.actions}>
             {!showSecondDeviceLoginForm && (
-              <button
-                className={styles.linkButton}
-                onClick={handleSecondDeviceLogin}
-              >
-                כניסה ממכשיר נוסף
-              </button>
+              <>
+                <button
+                  className={styles.linkButton}
+                  onClick={handleSecondDeviceLogin}
+                >
+                  כניסה ממכשיר נוסף
+                </button>
+                <div className={styles.dot}>·</div>
+              </>
             )}
+            <button
+              className={styles.linkButton}
+              onClick={handleShowPrettyPassword}
+            >
+              שמירת פרטי הזדהות
+            </button>
+            <div className={styles.dot}>·</div>
+            <Link className={styles.link} to="/pretty-creds-signin">
+              הזנת פרטי הזדהות
+            </Link>
           </div>
           {showSecondDeviceLoginForm && <SecondDeviceLoginForm />}
+          {showPrettyCreds && <PrettyCreds />}
           <div className={styles.disclaimer}>
             השאלון נשמר אוטומטית, בצורה מוצפנת.
             <br />

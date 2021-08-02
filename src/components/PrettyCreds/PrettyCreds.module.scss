@@ -1,0 +1,19 @@
+.prettyCreds {
+  border: 1px solid #c9c9c9;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+
+  .pre {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+
+  .creds {
+    margin-top: 0.5rem;
+    direction: ltr;
+    display: flex;
+    flex-direction: column;
+  }
+}

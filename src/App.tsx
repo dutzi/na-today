@@ -2,12 +2,16 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import JustForToday from './components/JustForToday/JustForToday';
-import Login from './components/PairLandingPage/PairLandingPage';
+import PairLandingPage from './components/PairLandingPage/PairLandingPage';
+import PrettyCredsSignIn from './components/PrettyCredsSignIn/PrettyCredsSignIn';
 
 function App() {
   return (
     <Router>
       <Switch>
+        <Route path="/pretty-creds-signin">
+          <PrettyCredsSignIn />
+        </Route>
         <Route path="/:date?" exact>
           <JustForToday />
         </Route>
@@ -15,7 +19,7 @@ function App() {
           <JustForToday readOnly />
         </Route>
         <Route path="/pair/:pairId" exact>
-          <Login />
+          <PairLandingPage />
         </Route>
       </Switch>
     </Router>
