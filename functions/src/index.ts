@@ -4,7 +4,7 @@ import * as functions from 'firebase-functions';
 
 admin.initializeApp();
 
-export const clearSecondLoginLinks = functions.pubsub
+export const clearPairingLinks = functions.pubsub
   .schedule('every 1 minutes')
   .onRun(async (context) => {
     const docs = await firestore()

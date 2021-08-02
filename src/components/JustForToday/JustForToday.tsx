@@ -297,7 +297,12 @@ export default function JustForToday({ readOnly }: { readOnly?: boolean }) {
   }
 
   if (!answers) {
-    return null;
+    return (
+      <div className={styles.justForToday}>
+        <Header />
+        <div className={styles.loading}>טוען שאלון...</div>
+      </div>
+    );
   }
 
   return (

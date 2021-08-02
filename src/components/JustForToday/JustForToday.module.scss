@@ -7,6 +7,11 @@
   margin: 1rem auto;
   position: relative;
 
+  .loading {
+    font-size: 1.25rem;
+    margin: 1rem;
+  }
+
   &.readOnly {
     .formControl {
       .textarea {
