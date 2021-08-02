@@ -484,18 +484,18 @@ export default function JustForToday({ readOnly }: { readOnly?: boolean }) {
               שיתוף בוואטסאפ
             </a>
           </div>
+          {!showSecondDeviceLoginForm && (
+            <div className={styles.actions}>
+              <button
+                className={styles.linkButton}
+                onClick={handleSecondDeviceLogin}
+              >
+                כניסה ממכשיר נוסף
+              </button>
+            </div>
+          )}
+          {showSecondDeviceLoginForm && <SecondDeviceLoginForm />}
           <div className={styles.actions}>
-            {!showSecondDeviceLoginForm && (
-              <>
-                <button
-                  className={styles.linkButton}
-                  onClick={handleSecondDeviceLogin}
-                >
-                  כניסה ממכשיר נוסף
-                </button>
-                <div className={styles.dot}>·</div>
-              </>
-            )}
             <button
               className={styles.linkButton}
               onClick={handleShowPrettyPassword}
@@ -507,7 +507,6 @@ export default function JustForToday({ readOnly }: { readOnly?: boolean }) {
               הזנת פרטי הזדהות
             </Link>
           </div>
-          {showSecondDeviceLoginForm && <SecondDeviceLoginForm />}
           {showPrettyCreds && <PrettyCreds />}
           <div className={styles.disclaimer}>
             השאלון נשמר אוטומטית, בצורה מוצפנת.
