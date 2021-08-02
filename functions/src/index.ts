@@ -8,7 +8,7 @@ export const clearSecondLoginLinks = functions.pubsub
   .schedule('every 1 minutes')
   .onRun(async (context) => {
     const docs = await firestore()
-      .collection('/second-device-login')
+      .collection('/pairing')
       .where(
         'createdAt',
         '<=',

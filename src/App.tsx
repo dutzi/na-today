@@ -1,20 +1,20 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import JustForTodayForm from './components/JustForToday/JustForTodayForm';
-import Login from './components/Login/Login';
+import JustForToday from './components/JustForToday/JustForToday';
+import Login from './components/PairLandingPage/PairLandingPage';
 
 function App() {
   return (
     <Router>
       <Switch>
         <Route path="/:date?" exact>
-          <JustForTodayForm />
+          <JustForToday />
         </Route>
         <Route path="/r/:shareId" exact>
-          <JustForTodayForm readOnly />
+          <JustForToday readOnly />
         </Route>
-        <Route path="/login/:loginId" exact>
+        <Route path="/pair/:pairId" exact>
           <Login />
         </Route>
       </Switch>

@@ -3,7 +3,7 @@ import cx from 'classnames';
 import firebase from 'firebase/app';
 import { ReactComponent as ChevronRight } from '../../svgs/chevron-right.svg';
 import { ReactComponent as ChevronLeft } from '../../svgs/chevron-left.svg';
-import styles from './JustForTodayForm.module.scss';
+import styles from './JustForToday.module.scss';
 import { Link, useRouteMatch } from 'react-router-dom';
 import React, { useEffect, useMemo, useState } from 'react';
 import throttle from 'lodash/fp/throttle';
@@ -11,7 +11,7 @@ import StringCrypto from 'string-crypto';
 import { v4 as uuidv4 } from 'uuid';
 import Header from '../Header/Header';
 import ShareForm from '../ShareForm/ShareForm';
-import SecondDeviceLoginForm from '../SecondDeviceLoginForm/SecondDeviceLoginForm';
+import SecondDeviceLoginForm from '../PairLink/PairLink';
 
 const { encryptString, decryptString } = new StringCrypto();
 
@@ -64,7 +64,7 @@ const password = localStorage.getItem('password') ?? uuidv4();
 localStorage.setItem('uuid', uuid);
 localStorage.setItem('password', password);
 
-export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
+export default function JustForToday({ readOnly }: { readOnly?: boolean }) {
   const routeParams = useRouteMatch<RouteParams>();
   const [uid, setUid] = useState<string>();
   const [docId, setDocId] = useState<string>();
@@ -295,7 +295,7 @@ export default function JustForTodayForm({ readOnly }: { readOnly?: boolean }) {
   }
 
   return (
-    <div className={cx(styles.justForTodayForm, readOnly && styles.readOnly)}>
+    <div className={cx(styles.justForToday, readOnly && styles.readOnly)}>
       <Header />
       {!readOnly && (
         <nav className={styles.nav}>

@@ -1,4 +1,4 @@
-.login {
+.pairLandingPage {
   text-align: center;
   font-family: 'Frank Ruhl Libre';
   direction: rtl;
@@ -9,19 +9,19 @@
 
   .codeInput {
     width: 100%;
-    font-size: inherit;
-    font-family: inherit;
     margin: 1rem 0;
     text-align: center;
     appearance: none;
     border: 1px solid #bbb;
     border-radius: 4px;
-    padding: 0.25rem 0.5rem;
     box-sizing: border-box;
     direction: ltr;
     font-family: monospace;
-    font-size: 1.25rem;
     font-weight: bold;
+    padding: 1rem;
+    background: #ededed;
+    font-size: 1.5rem;
+    direction: ltr;
   }
 
   .linkButton {

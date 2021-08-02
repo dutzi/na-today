@@ -1,4 +1,4 @@
-.secondDeviceLoginForm {
+.pairLink {
   text-align: center;
   font-family: 'Frank Ruhl Libre';
   direction: rtl;
@@ -17,6 +17,7 @@
     margin-top: 0.5rem;
     font-family: monospace;
     font-size: 1.5rem;
+    direction: ltr;
   }
 
   .url {
@@ -31,5 +32,6 @@
     padding: 0.25rem 0.5rem;
     font-weight: bold;
     box-sizing: border-box;
+    direction: ltr;
   }
 }

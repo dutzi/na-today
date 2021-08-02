@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import firebase from 'firebase/app';
-import styles from './SecondDeviceLoginForm.module.scss';
+import styles from './PairLink.module.scss';
 import StringCrypto from 'string-crypto';
 import generator from 'generate-password';
 
@@ -17,11 +17,11 @@ password = `${password.slice(0, 4)}-${password.slice(4, 8)}-${password.slice(
   12
 )}`;
 
-async function generateLoginId() {
-  let loginId: number;
+async function generatePairId() {
+  let pairId: number;
   while (true) {
-    loginId = Math.floor(Math.random() * 1000000);
-    const docPath = `/second-device-login/${loginId}`;
+    pairId = Math.floor(Math.random() * 1000000);
+    const docPath = `/pairing/${pairId}`;
     const doc = await firebase.firestore().doc(docPath).get();
 
     if (!doc.exists) {
@@ -36,14 +36,14 @@ async function generateLoginId() {
       break;
     }
   }
-  return loginId;
+  return pairId;
 }
 
-export default function SecondDeviceLoginForm() {
-  const [loginId, setLoginId] = useState<number>();
+export default function PairLink() {
+  const [pairId, setPairId] = useState<number>();
 
   useEffect(() => {
-    generateLoginId().then(setLoginId);
+    generatePairId().then(setPairId);
   }, []);
 
   function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
@@ -55,19 +55,18 @@ export default function SecondDeviceLoginForm() {
       ? 'http://localhost:3001'
       : 'https://na.today';
 
-  if (!loginId) {
-    return (
-      <div className={styles.secondDeviceLoginForm}>מייצר לינק התחברות</div>
-    );
+  if (!pairId) {
+    return <div className={styles.pairLink}>מייצר לינק התחברות</div>;
   }
 
   return (
-    <div className={styles.secondDeviceLoginForm}>
+    <div className={styles.pairLink}>
       <div>כנסו ללינק הבא מתוך המכשיר ממנו תרצו להתחבר:</div>
       <input
         className={styles.url}
         type="text"
-        value={`${basepath}/login/${loginId}`}
+        value={`${basepath}/pair/${pairId}`}
+        onChange={() => {}}
         onFocus={handleFocus}
       />
       <div>לאחר שנכנסתם ללינק, הזינו את הקוד הבא לכשתתבקשו:</div>

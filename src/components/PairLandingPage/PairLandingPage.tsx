@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import firebase from 'firebase/app';
-import styles from './Login.module.scss';
+import styles from './PairLandingPage.module.scss';
 import StringCrypto from 'string-crypto';
 import Header from '../Header/Header';
 import { useRouteMatch } from 'react-router-dom';
@@ -8,12 +8,12 @@ import { useRouteMatch } from 'react-router-dom';
 const { decryptString } = new StringCrypto();
 
 interface RouteParams {
-  loginId: string;
+  pairId: string;
 }
 
-export default function Login() {
+export default function PairLandingPage() {
   const codeInputRef = useRef<HTMLInputElement>(null);
-  const [code, setCode] = useState<string>();
+  const [code, setCode] = useState('');
   const [encryptedPassword, setEncryptedPassword] = useState<string>();
   const [encryptedUuid, setEncryptedUuid] = useState<string>();
   const routeMatch = useRouteMatch<RouteParams>();
@@ -21,6 +21,7 @@ export default function Login() {
 
   function handleCodeChange(e: React.ChangeEvent<HTMLInputElement>) {
     setCode(e.target.value);
+    setShowErrorMessage(false);
   }
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export default function Login() {
   useEffect(() => {
     firebase
       .firestore()
-      .doc(`/second-device-login/${routeMatch.params.loginId}`)
+      .doc(`/pairing/${routeMatch.params.pairId}`)
       .get()
       .then((doc) => {
         setEncryptedPassword(doc.data()?.password);
@@ -40,8 +41,6 @@ export default function Login() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    setShowErrorMessage(false);
 
     const uuid = decryptString(encryptedUuid, code);
     const password = decryptString(encryptedPassword, code);
@@ -57,7 +56,7 @@ export default function Login() {
   }
 
   return (
-    <div className={styles.login}>
+    <div className={styles.pairLandingPage}>
       <Header />
       <div>הזינו את הקוד שקבלתם:</div>
       <form onSubmit={handleSubmit}>
